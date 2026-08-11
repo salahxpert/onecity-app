@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Google Sheet Config</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f4f7fc; --bg-card: #ffffff; --bg-header: linear-gradient(145deg, #0a2540, #1a3a5c);
+            --text-primary: #0a2540; --text-secondary: #64748b; --border-color: #e9edf2;
+            --shadow: 0 10px 30px rgba(10,37,64,0.12); --radius: 24px; --transition: 0.3s ease;
+        }
+        [data-bs-theme="dark"] {
+            --bg-body: #0f1724; --bg-card: #1a2634; --bg-header: linear-gradient(145deg, #0d1b2a, #1a2a3d);
+            --text-primary: #e8edf4; --text-secondary: #94a3b8; --border-color: #2a3a4a; --shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        * { font-family: 'Inter', sans-serif; }
+        body { background: var(--bg-body); color: var(--text-primary); padding: 15px; transition: background var(--transition), color var(--transition); }
+        .header-card {
+            background: var(--bg-header); border-radius: var(--radius); padding: 18px 24px; margin-bottom: 20px; box-shadow: var(--shadow);
+            color: white; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+        }
+        .header-card h2 { font-weight: 800; font-size: 1.2rem; margin: 0; }
+        .header-card .nav-buttons { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .header-card .nav-buttons a, .header-card .nav-buttons .theme-toggle {
+            color: white; text-decoration: none; background: rgba(255,255,255,0.12);
+            padding: 6px 14px; border-radius: 60px; font-size: 0.75rem;
+            transition: var(--transition); display: inline-flex; align-items: center; gap: 4px;
+            border: none; cursor: pointer;
+        }
+        .header-card .nav-buttons a:hover, .header-card .nav-buttons .theme-toggle:hover { background: rgba(255,255,255,0.25); }
+        .card { background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border-color); padding: 20px; }
+        .form-control { background: var(--bg-body); color: var(--text-primary); border-color: var(--border-color); border-radius: 12px; padding: 10px 14px; }
+        .input-group-text { background: var(--bg-body); color: var(--text-primary); border-color: var(--border-color); }
+        .btn-rounded { border-radius: 60px; padding: 8px 24px; font-weight: 600; }
+        @media (max-width: 640px) { .header-card { flex-direction: column; align-items: stretch; text-align: center; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header-card">
+        <h2><i class="bi bi-google me-2"></i>Google Sheet Configuration</h2>
+        <div class="nav-buttons">
+            <a href="/"><i class="bi bi-house-door me-1"></i>Home</a>
+            <button class="theme-toggle" onclick="toggleTheme()"><i class="bi bi-moon-fill" id="themeIcon"></i> <span id="themeLabel">Dark</span></button>
+        </div>
+    </div>
+    <div class="card">
+        <div class="alert alert-info"><i class="bi bi-info-circle me-2"></i><strong>Instructions:</strong> Paste your Google Sheet shareable link below.<br><small class="text-muted">Example: https://docs.google.com/spreadsheets/d/1ABC123.../edit</small></div>
+        <div class="mb-3">
+            <label class="form-label fw-bold">Google Sheet URL</label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
+                <input type="url" id="sheetUrl" class="form-control" placeholder="Paste your Google Sheet link here...">
+                <button class="btn btn-success" onclick="saveUrl()"><i class="bi bi-save me-1"></i>Save</button>
+            </div>
+            <div id="status" class="mt-2 small"></div>
+        </div>
+        <hr>
+        <div class="mt-3">
+            <h6 class="fw-bold">Current Configuration</h6>
+            <div id="currentUrl" class="p-3 rounded-4" style="background:var(--bg-body);border:1px solid var(--border-color);"><span class="text-muted">No URL configured yet.</span></div>
+            <div class="mt-3">
+                <button class="btn btn-outline-danger btn-sm" onclick="clearUrl()"><i class="bi bi-trash me-1"></i>Clear URL</button>
+                <button class="btn btn-outline-primary btn-sm" onclick="testSync()"><i class="bi bi-arrow-repeat me-1"></i>Test Sync</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function toggleTheme() { /* same */ }
+function updateThemeUI(theme) { /* same */ }
+(function() { /* same */ })();
+
+async function loadUrl() {
+    try {
+        const res = await fetch('/api/get_google_sheet');
+        const data = await res.json();
+        if (data.url) { document.getElementById('currentUrl').innerHTML = `<code>${data.url}</code>`; document.getElementById('sheetUrl').value = data.url; }
+    } catch(e) { console.error(e); }
+}
+loadUrl();
+
+async function saveUrl() {
+    const url = document.getElementById('sheetUrl').value.trim();
+    if (!url) { document.getElementById('status').innerHTML = '<span class="text-danger">Please enter a valid URL.</span>'; return; }
+    document.getElementById('status').innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Saving...';
+    try {
+        const res = await fetch('/api/set_google_sheet', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: url }) });
+        const data = await res.json();
+        if (data.success) { document.getElementById('status').innerHTML = `<span class="text-success">✅ ${data.message}</span>`; loadUrl(); }
+        else { document.getElementById('status').innerHTML = `<span class="text-danger">❌ ${data.error}</span>`; }
+    } catch(e) { document.getElementById('status').innerHTML = `<span class="text-danger">❌ ${e.message}</span>`; }
+}
+
+async function clearUrl() {
+    if (!confirm('Are you sure?')) return;
+    try {
+        await fetch('/api/set_google_sheet', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: '' }) });
+        document.getElementById('currentUrl').innerHTML = '<span class="text-muted">No URL configured.</span>';
+        document.getElementById('sheetUrl').value = '';
+        document.getElementById('status').innerHTML = '<span class="text-success">✅ URL cleared.</span>';
+    } catch(e) { document.getElementById('status').innerHTML = `<span class="text-danger">❌ ${e.message}</span>`; }
+}
+
+async function testSync() {
+    document.getElementById('status').innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Testing sync...';
+    try {
+        const res = await fetch('/api/sync_google_sheet', { method: 'POST' });
+        const data = await res.json();
+        document.getElementById('status').innerHTML = `<span class="text-info">ℹ️ ${data.message}</span>`;
+    } catch(e) { document.getElementById('status').innerHTML = `<span class="text-danger">❌ ${e.message}</span>`; }
+}
+</script>
+</body>
+</html>

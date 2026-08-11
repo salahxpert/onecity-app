@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Login - One City</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f0f4f9;
+            --bg-card: #ffffff;
+            --text-primary: #0a2540;
+            --border-color: #e9edf2;
+        }
+        [data-bs-theme="dark"] {
+            --bg-body: #0f1724;
+            --bg-card: #1a2634;
+            --text-primary: #e8edf4;
+            --border-color: #2a3a4a;
+        }
+        * { font-family: 'Inter', sans-serif; }
+        body { background: var(--bg-body); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; transition: background 0.3s; }
+        .login-card {
+            background: var(--bg-card);
+            border-radius: 32px;
+            padding: 40px 35px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-color);
+            transition: background 0.3s, border 0.3s;
+        }
+        .login-card .logo { text-align: center; margin-bottom: 30px; }
+        .login-card .logo i { font-size: 3rem; color: #0a2540; }
+        .login-card .logo h1 { font-weight: 800; font-size: 1.5rem; color: var(--text-primary); margin-top: 8px; }
+        .login-card .logo p { color: #64748b; font-size: 0.85rem; }
+        .form-control { border-radius: 60px; padding: 12px 20px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-primary); }
+        .form-control:focus { border-color: #0a2540; box-shadow: none; }
+        .btn-login { background: #0a2540; color: white; border-radius: 60px; padding: 12px; font-weight: 700; width: 100%; transition: 0.3s; }
+        .btn-login:hover { background: #1a3a5c; color: white; }
+        .dark-toggle { position: fixed; top: 20px; right: 20px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 60px; padding: 8px 16px; color: var(--text-primary); cursor: pointer; }
+        .alert { border-radius: 60px; }
+    </style>
+</head>
+<body>
+<button class="dark-toggle" onclick="toggleTheme()"><i class="bi bi-moon-fill" id="loginDarkIcon"></i></button>
+<div class="login-card">
+    <div class="logo">
+        <i class="bi bi-building"></i>
+        <h1>One City Developers Ltd.</h1>
+        <p>Land Sales Office | Gulshan-1, Dhaka</p>
+    </div>
+    {% if error %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">{{ error }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    {% endif %}
+    <form method="POST">
+        <div class="mb-3"><label class="form-label fw-semibold">Username</label><input type="text" name="username" class="form-control" placeholder="Enter username" required></div>
+        <div class="mb-3"><label class="form-label fw-semibold">Password</label><input type="password" name="password" class="form-control" placeholder="Enter password" required></div>
+        <button type="submit" class="btn btn-login"><i class="bi bi-box-arrow-in-right me-2"></i>Login</button>
+    </form>
+    <div class="text-center mt-3 text-muted small">Default: admin / admin123</div>
+</div>
+<script>
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-bs-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-bs-theme', next);
+    localStorage.setItem('theme', next);
+    const icon = document.getElementById('loginDarkIcon');
+    if (icon) icon.className = next === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+}
+(function() {
+    const saved = localStorage.getItem('theme');
+    if (saved) {
+        document.documentElement.setAttribute('data-bs-theme', saved);
+        const icon = document.getElementById('loginDarkIcon');
+        if (icon) icon.className = saved === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+    }
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

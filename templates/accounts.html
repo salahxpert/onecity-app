@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="bn" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Accounts Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f0f2f5;
+            --bg-card: #ffffff;
+            --bg-header: linear-gradient(145deg, #0a2540, #1a3a5c);
+            --text-primary: #0a2540;
+            --text-secondary: #64748b;
+            --border-color: #e9edf2;
+            --shadow: 0 10px 30px rgba(10, 37, 64, 0.12);
+            --radius: 24px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        [data-bs-theme="dark"] {
+            --bg-body: #0f1724;
+            --bg-card: #1a2634;
+            --bg-header: linear-gradient(145deg, #0d1b2a, #1a2a3d);
+            --text-primary: #e8edf4;
+            --text-secondary: #94a3b8;
+            --border-color: #2a3a4a;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        * { font-family: 'Inter', sans-serif; }
+        body { background: var(--bg-body); color: var(--text-primary); padding: 15px; transition: background var(--transition), color var(--transition); }
+        .main-container { max-width: 1400px; margin: auto; }
+        .header-card {
+            background: var(--bg-header);
+            border-radius: var(--radius);
+            padding: 18px 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            transition: background var(--transition);
+        }
+        .header-card h2 { font-weight: 800; font-size: 1.3rem; margin: 0; }
+        .header-card small { opacity: 0.7; display: block; font-size: 0.75rem; font-weight: 400; }
+        .header-card .nav-buttons { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .header-card .nav-buttons a, .header-card .nav-buttons .theme-toggle {
+            color: white;
+            text-decoration: none;
+            background: rgba(255,255,255,0.12);
+            padding: 6px 14px;
+            border-radius: 60px;
+            font-size: 0.75rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border: none;
+            cursor: pointer;
+        }
+        .header-card .nav-buttons a:hover, .header-card .nav-buttons .theme-toggle:hover { background: rgba(255,255,255,0.25); }
+        .header-card .nav-buttons .home-btn { background: #ffc107; color: #0a2540; font-weight: 700; }
+        .header-card .nav-buttons .home-btn:hover { background: #ffca2c; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: var(--bg-card); border-radius: 16px; padding: 12px 8px; text-align: center; border: 1px solid var(--border-color); transition: var(--transition); }
+        .stat-card .number { font-size: 1.4rem; font-weight: 800; }
+        .stat-card .label { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px; }
+        .bg-cash { background: #ecfdf5; color: #065f46; } .bg-online { background: #eff6ff; color: #1e40af; }
+        .bg-clear-cheque { background: #f0fdf4; color: #166534; } .bg-adv-cheque { background: #fffbeb; color: #92400e; }
+        .bg-dish-cheque { background: #fef2f2; color: #991b1b; } .bg-grand { background: #0a2540; color: white; }
+        [data-bs-theme="dark"] .bg-cash { background: #1a3a2a; color: #6fcf97; }
+        [data-bs-theme="dark"] .bg-online { background: #1a2a4a; color: #6f9fcf; }
+        [data-bs-theme="dark"] .bg-clear-cheque { background: #1a3a2a; color: #6fcf97; }
+        [data-bs-theme="dark"] .bg-adv-cheque { background: #3a2a1a; color: #cf9f6f; }
+        [data-bs-theme="dark"] .bg-dish-cheque { background: #3a1a1a; color: #cf6f6f; }
+        [data-bs-theme="dark"] .bg-grand { background: #1a2a3a; color: white; }
+        .tab-container { background: var(--bg-card); border-radius: 20px; padding: 16px; border: 1px solid var(--border-color); }
+        .nav-tabs { border-bottom: 2px solid var(--border-color); gap: 4px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px; }
+        .nav-tabs .nav-item { flex-shrink: 0; }
+        .nav-tabs .nav-link { border-radius: 50px; padding: 6px 16px; font-weight: 600; font-size: 0.75rem; color: var(--text-primary); border: none; background: transparent; transition: var(--transition); white-space: nowrap; }
+        .nav-tabs .nav-link:hover { background: var(--bg-body); }
+        .nav-tabs .nav-link.active { background: #0a2540; color: white; box-shadow: 0 4px 12px rgba(10,37,64,0.2); }
+        [data-bs-theme="dark"] .nav-tabs .nav-link.active { background: #2a4a6a; }
+        .tab-pane { padding-top: 14px; }
+        .table-custom { font-size: 0.75rem; margin: 0; width: 100%; color: var(--text-primary); }
+        .table-custom th { background: var(--bg-body); font-weight: 600; color: var(--text-primary); border-bottom: 2px solid var(--border-color); white-space: nowrap; padding: 8px 6px; font-size: 0.65rem; text-transform: uppercase; }
+        .table-custom td { vertical-align: middle; padding: 6px; }
+        .table-custom tr:hover { background: var(--bg-body); }
+        .edit-btn { padding: 2px 8px; border-radius: 30px; font-size: 0.65rem; }
+        .search-bar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+        .search-bar input { flex: 1; min-width: 180px; border-radius: 60px; padding: 6px 16px; border: 1px solid var(--border-color); font-size: 0.8rem; background: var(--bg-card); color: var(--text-primary); }
+        .search-bar input:focus { border-color: #0a2540; outline: none; }
+        @media (max-width: 640px) {
+            .header-card { flex-direction: column; align-items: stretch; text-align: center; }
+            .header-card .nav-buttons { justify-content: center; }
+            .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+            .stat-card .number { font-size: 1rem; }
+            .nav-tabs .nav-link { font-size: 0.65rem; padding: 4px 10px; }
+            .table-custom { font-size: 0.65rem; }
+            .table-custom th, .table-custom td { padding: 4px; }
+        }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <div class="header-card">
+        <div><h2><i class="bi bi-wallet2 me-2"></i>Accounts Dashboard</h2><small>One City Developers Ltd. | Collection, Salary & Conveyance</small></div>
+        <div class="nav-buttons">
+            <a href="/" class="home-btn"><i class="bi bi-house-door me-1"></i>Home</a>
+            <a href="/add-collection"><i class="bi bi-plus-circle me-1"></i>Add</a>
+            <a href="/collections"><i class="bi bi-list-ul me-1"></i>All</a>
+            <a href="/google-config"><i class="bi bi-google me-1"></i>Sync</a>
+            <button class="theme-toggle" onclick="toggleTheme()"><i class="bi bi-moon-fill" id="themeIcon"></i> <span id="themeLabel">Dark</span></button>
+        </div>
+    </div>
+
+    <div class="stats-grid" id="summaryCards">
+        <div class="stat-card bg-cash"><div class="number" id="totalCash">-</div><div class="label">Cash</div></div>
+        <div class="stat-card bg-online"><div class="number" id="totalOnline">-</div><div class="label">Online</div></div>
+        <div class="stat-card bg-clear-cheque"><div class="number" id="totalClearCheque">-</div><div class="label">Clear Chq</div></div>
+        <div class="stat-card bg-adv-cheque"><div class="number" id="totalAdvCheque">-</div><div class="label">Adv. Chq</div></div>
+        <div class="stat-card bg-dish-cheque"><div class="number" id="totalDishCheque">-</div><div class="label">Dish. Chq</div></div>
+        <div class="stat-card bg-grand"><div class="number text-white" id="grandTotal">-</div><div class="label text-white-50">Grand Total</div></div>
+    </div>
+
+    <div class="tab-container">
+        <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#collections-tab" type="button">Collections</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#salary-tab" type="button">Salary</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#conveyance-tab" type="button">Conveyance</button></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="collections-tab">
+                <div class="search-bar">
+                    <input type="text" id="collectionSearch" placeholder="Search by MR No, Client, Sales Person..." onkeyup="filterCollections()">
+                    <button class="btn btn-primary btn-sm" onclick="filterCollections()"><i class="bi bi-search me-1"></i>Search</button>
+                </div>
+                <ul class="nav nav-tabs" id="mrTabs" role="tablist">
+                    {% for sheet, records in groups.items() %}
+                    <li class="nav-item"><button class="nav-link {% if loop.first %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#panel-{{ loop.index }}" type="button">{{ sheet[:25] }}</button></li>
+                    {% endfor %}
+                </ul>
+                <div class="tab-content">
+                    {% for sheet, records in groups.items() %}
+                    <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="panel-{{ loop.index }}">
+                        <div class="table-responsive">
+                            <table class="table table-custom table-hover">
+                                <thead><tr>
+                                    <th>MR No</th><th>Client</th><th>Sales Person</th><th>Project</th><th>Date</th><th>Type</th>
+                                    <th class="text-end">Cash</th><th class="text-end">Online</th><th class="text-end">Clear Chq</th>
+                                    <th class="text-end">Adv Chq</th><th class="text-end">Dish Chq</th><th class="text-center">Action</th>
+                                </tr></thead>
+                                <tbody>
+                                    {% for col in records %}
+                                    <tr class="collection-row">
+                                        <td><strong>{{ col.mr_no }}</strong></td>
+                                        <td>{{ col.client_name }}</td>
+                                        <td>{{ col.sales_person if col.sales_person else 'N/A' }}</td>
+                                        <td>{{ col.project }}</td>
+                                        <td>{{ col.collection_date }}</td>
+                                        <td><span class="badge bg-light text-dark">{{ col.mr_type }}</span></td>
+                                        <td class="text-end">{{ col.cash }}</td>
+                                        <td class="text-end">{{ col.dd_ft_online }}</td>
+                                        <td class="text-end">{{ col.clear_cheque }}</td>
+                                        <td class="text-end">{{ col.advance_cheque }}</td>
+                                        <td class="text-end">{{ col.dishonour_cheque }}</td>
+                                        <td class="text-center"><a href="/edit-collection/{{ col.id }}" class="btn btn-outline-primary btn-sm edit-btn"><i class="bi bi-pencil"></i></a></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="salary-tab">
+                <div class="search-bar">
+                    <input type="text" id="salarySearch" placeholder="Search by Employee, Month..." onkeyup="filterSalary()">
+                    <button class="btn btn-primary btn-sm" onclick="filterSalary()"><i class="bi bi-search me-1"></i>Search</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-custom table-hover" id="salaryTable">
+                        <thead><tr>
+                            <th>Month</th><th>Employee</th><th>Designation</th>
+                            <th class="text-end">Gross</th><th class="text-end">Payable</th>
+                            <th class="text-end">Paid</th><th class="text-end">Due</th>
+                            <th class="text-center">Action</th>
+                        </tr></thead>
+                        <tbody>
+                            {% for row in salary_data %}
+                            <tr class="salary-row">
+                                <td><strong>{{ row.month }}</strong></td>
+                                <td>{{ row.employee }}</td>
+                                <td>{{ row.designation }}</td>
+                                <td class="text-end">{{ row.gross_salary }}</td>
+                                <td class="text-end">{{ row.payable_salary }}</td>
+                                <td class="text-end">{{ row.paid_taka }}</td>
+                                <td class="text-end"><span class="badge bg-danger">{{ row.due_salary }}</span></td>
+                                <td class="text-center"><button class="btn btn-outline-primary btn-sm edit-btn" onclick="editSalary({{ row.id }})"><i class="bi bi-pencil"></i></button></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="conveyance-tab">
+                <div class="search-bar">
+                    <input type="text" id="convSearch" placeholder="Search by Employee, Client, Purpose..." onkeyup="filterConveyance()">
+                    <button class="btn btn-primary btn-sm" onclick="filterConveyance()"><i class="bi bi-search me-1"></i>Search</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-custom table-hover" id="convTable">
+                        <thead><tr>
+                            <th>Date</th><th>Employee</th><th>Purpose</th><th>Client</th>
+                            <th class="text-end">Amount</th><th>Type</th>
+                        </tr></thead>
+                        <tbody>
+                            {% for row in conveyance_data %}
+                            <tr class="conv-row">
+                                <td>{{ row.bill_date }}</td>
+                                <td>{{ row.employee }}</td>
+                                <td>{{ row.purpose }}</td>
+                                <td>{{ row.client_name }}</td>
+                                <td class="text-end">{{ row.amount }}</td>
+                                <td><span class="badge {% if row.type == 'Pending' %}bg-warning{% else %}bg-success{% endif %}">{{ row.type }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-bs-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-bs-theme', next);
+    localStorage.setItem('theme', next);
+    updateThemeUI(next);
+}
+function updateThemeUI(theme) {
+    const icon = document.getElementById('themeIcon');
+    const label = document.getElementById('themeLabel');
+    if (icon && label) {
+        if (theme === 'dark') { icon.className = 'bi bi-sun-fill'; label.textContent = 'Light'; }
+        else { icon.className = 'bi bi-moon-fill'; label.textContent = 'Dark'; }
+    }
+}
+(function() {
+    const saved = localStorage.getItem('theme');
+    if (saved) {
+        document.documentElement.setAttribute('data-bs-theme', saved);
+        updateThemeUI(saved);
+    }
+})();
+
+fetch('/api/db_stats')
+    .then(res => res.json())
+    .then(data => {
+        if (data.summary) {
+            const s = data.summary;
+            document.getElementById('totalCash').innerText = (s.total_cash || 0).toLocaleString();
+            document.getElementById('totalOnline').innerText = (s.total_online || 0).toLocaleString();
+            document.getElementById('totalClearCheque').innerText = (s.total_cheque || 0).toLocaleString();
+            document.getElementById('totalAdvCheque').innerText = (s.total_advance || 0).toLocaleString();
+            document.getElementById('totalDishCheque').innerText = (s.total_dishonour || 0).toLocaleString();
+            const grand = (s.total_cash||0)+(s.total_online||0)+(s.total_cheque||0)+(s.total_advance||0)+(s.total_dishonour||0);
+            document.getElementById('grandTotal').innerText = grand.toLocaleString();
+        }
+    });
+
+function filterCollections() {
+    const q = document.getElementById('collectionSearch').value.toLowerCase();
+    document.querySelectorAll('#collections-tab .collection-row').forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(q) ? '' : 'none';
+    });
+}
+function filterSalary() {
+    const q = document.getElementById('salarySearch').value.toLowerCase();
+    document.querySelectorAll('#salary-tab .salary-row').forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(q) ? '' : 'none';
+    });
+}
+function filterConveyance() {
+    const q = document.getElementById('convSearch').value.toLowerCase();
+    document.querySelectorAll('#conveyance-tab .conv-row').forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(q) ? '' : 'none';
+    });
+}
+function editSalary(id) {
+    const row = document.querySelector(`#salary-tab .salary-row button[onclick="editSalary(${id})"]`).closest('tr');
+    const cells = row.querySelectorAll('td');
+    const gross = cells[3].innerText.trim(), payable = cells[4].innerText.trim(), paid = cells[5].innerText.trim(), due = cells[6].innerText.trim();
+    const newGross = prompt('Gross Salary:', gross);
+    if (newGross !== null) {
+        const newPayable = prompt('Payable Salary:', payable);
+        if (newPayable !== null) {
+            const newPaid = prompt('Paid Taka:', paid);
+            if (newPaid !== null) {
+                const newDue = prompt('Due Salary:', due);
+                if (newDue !== null) {
+                    fetch(`/api/salary/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ gross_salary: parseFloat(newGross), payable_salary: parseFloat(newPayable), paid_taka: parseFloat(newPaid), due_salary: parseFloat(newDue) })
+                    }).then(res => res.json()).then(data => { if (data.success) location.reload(); else alert('Update failed'); }).catch(() => alert('Error updating salary'));
+                }
+            }
+        }
+    }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

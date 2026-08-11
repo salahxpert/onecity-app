@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 16px;
+        direction: ltr;
+    }
+    .grid-item {
+        background: var(--bg-card);
+        border-radius: 18px;
+        padding: 20px 12px;
+        text-align: center;
+        border: 1px solid var(--border-color);
+        text-decoration: none;
+        color: var(--text-primary);
+        transition: var(--transition);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+    .grid-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(13,110,253,0.08);
+        border-color: #0d6efd;
+    }
+    .grid-item .icon { font-size: 1.8rem; color: #0d6efd; }
+    .grid-item .count { font-size: 1.6rem; font-weight: 800; }
+    .grid-item .label { font-size: 0.7rem; color: var(--text-secondary); margin-top: 4px; }
+    .search-box { max-width: 400px; margin-bottom: 18px; }
+    @media (max-width: 640px) {
+        .grid-container { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .search-box { max-width: 100%; }
+        .grid-item { padding: 14px 8px; }
+        .grid-item .icon { font-size: 1.4rem; }
+        .grid-item .count { font-size: 1.2rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="search-box">
+    <input type="text" id="adminSearch" class="form-control rounded-pill" placeholder="Search tables..." onkeyup="filterAdmin()" style="background:var(--bg-card);color:var(--text-primary);border-color:var(--border-color);">
+</div>
+<div class="grid-container" id="adminGrid">
+    {% for table in tables %}
+    <a href="/admin/{{ table }}" class="grid-item" data-table="{{ table }}">
+        <div class="icon">
+            {% if table == 'employees' %}<i class="bi bi-people"></i>
+            {% elif table == 'clients' %}<i class="bi bi-person-lines-fill"></i>
+            {% elif table == 'bookings' %}<i class="bi bi-file-earmark-text"></i>
+            {% elif table == 'collections' %}<i class="bi bi-cash-stack"></i>
+            {% elif table == 'chq_register' %}<i class="bi bi-check2-square"></i>
+            {% elif table == 'conveyance' %}<i class="bi bi-car-front"></i>
+            {% elif table == 'salary' %}<i class="bi bi-cash"></i>
+            {% elif table == 'car_requisition' %}<i class="bi bi-truck"></i>
+            {% elif table == 'deed_movement' %}<i class="bi bi-file-earmark-text"></i>
+            {% elif table == 'token_money' %}<i class="bi bi-coin"></i>
+            {% elif table == 'courier' %}<i class="bi bi-envelope"></i>
+            {% elif table == 'hotel_reservation' %}<i class="bi bi-building"></i>
+            {% elif table == 'gift_ledger' %}<i class="bi bi-gift"></i>
+            {% elif table == 'mr_delivery' %}<i class="bi bi-truck-front"></i>
+            {% else %}<i class="bi bi-table"></i>{% endif %}
+        </div>
+        <div class="count">{{ counts[table] }}</div>
+        <div class="label">{{ table.replace('_', ' ').upper() }}</div>
+    </a>
+    {% endfor %}
+</div>
+<script>
+function filterAdmin() {
+    const q = document.getElementById('adminSearch').value.toLowerCase();
+    document.querySelectorAll('#adminGrid .grid-item').forEach(item => {
+        item.style.display = item.getAttribute('data-table').toLowerCase().includes(q) ? '' : 'none';
+    });
+}
+</script>
+{% endblock %}

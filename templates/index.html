@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="theme-color" content="#0d6efd">
+    <link rel="manifest" href="/static/manifest.json">
+    <title>One City Search</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f0f4f9;
+            --bg-card: #ffffff;
+            --bg-header: linear-gradient(145deg, #0a2540, #1a3a5c);
+            --text-primary: #0a2540;
+            --text-secondary: #64748b;
+            --border-color: #e9edf2;
+            --shadow: 0 20px 40px rgba(10, 37, 64, 0.12);
+            --radius: 28px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        [data-bs-theme="dark"] {
+            --bg-body: #0f1724;
+            --bg-card: #1a2634;
+            --bg-header: linear-gradient(145deg, #0d1b2a, #1a2a3d);
+            --text-primary: #e8edf4;
+            --text-secondary: #94a3b8;
+            --border-color: #2a3a4a;
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg-body); color: var(--text-primary); padding: 16px; min-height: 100vh; transition: background var(--transition), color var(--transition); }
+        .main-container { max-width: 1200px; margin: 0 auto; }
+
+        /* Header */
+        .header-card {
+            background: var(--bg-header);
+            border-radius: var(--radius);
+            padding: 18px 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            color: white;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            transition: background var(--transition);
+        }
+        .header-card .logo { display: flex; align-items: center; gap: 14px; }
+        .header-card .logo i { font-size: 2rem; }
+        .header-card .logo h1 { font-weight: 800; font-size: 1.3rem; margin: 0; letter-spacing: -0.5px; }
+        .header-card .logo p { margin: 0; opacity: 0.7; font-size: 0.75rem; }
+        .header-card .nav-buttons { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .header-card .nav-buttons a {
+            background: rgba(255,255,255,0.12);
+            color: white;
+            border-radius: 60px;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+            backdrop-filter: blur(4px);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .header-card .nav-buttons a:hover { background: rgba(255,255,255,0.25); transform: translateY(-1px); }
+        .header-card .nav-buttons .home-btn { background: #ffc107; color: #0a2540; font-weight: 700; }
+        .header-card .nav-buttons .home-btn:hover { background: #ffca2c; }
+        .theme-toggle {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            border-radius: 60px;
+            color: white;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .theme-toggle:hover { background: rgba(255,255,255,0.3); }
+
+        /* Search */
+        .search-wrapper {
+            background: var(--bg-card);
+            border-radius: 60px;
+            padding: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            transition: background var(--transition), border var(--transition);
+        }
+        .search-wrapper input {
+            border: none;
+            flex: 1;
+            padding: 14px 20px;
+            font-size: 1rem;
+            background: transparent;
+            outline: none;
+            color: var(--text-primary);
+        }
+        .search-wrapper input::placeholder { color: var(--text-secondary); }
+        .search-wrapper button {
+            background: #0a2540;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            color: white;
+            font-weight: 700;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .search-wrapper button:hover { background: #1a3a5c; transform: scale(1.02); }
+        [data-bs-theme="dark"] .search-wrapper button { background: #2a4a6a; }
+        [data-bs-theme="dark"] .search-wrapper button:hover { background: #3a5a7a; }
+
+        /* Grid */
+        .category-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin: 28px 0 16px 0;
+            border-left: 6px solid #0d6efd;
+            padding-left: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .grid-item {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 22px 12px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.02);
+            border: 1px solid var(--border-color);
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+        .grid-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(13, 110, 253, 0.08);
+            border-color: #0d6efd;
+        }
+        .grid-item .icon { font-size: 2rem; color: #0d6efd; margin-bottom: 4px; display: block; }
+        .grid-item .label { font-size: 0.8rem; font-weight: 600; }
+
+        /* Quick Actions */
+        .quick-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+        .quick-actions a { border-radius: 60px; padding: 8px 18px; font-weight: 500; font-size: 0.85rem; }
+
+        .status-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin: 12px 0 8px; gap: 8px; }
+        .status-bar .text-muted { font-size: 0.8rem; color: var(--text-secondary); }
+        .badge-stats { background: var(--bg-card); padding: 4px 12px; border-radius: 60px; font-size: 0.7rem; color: var(--text-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.02); border: 1px solid var(--border-color); }
+
+        @media (max-width: 640px) {
+            .header-card { flex-direction: column; align-items: stretch; text-align: center; padding: 16px; }
+            .header-card .nav-buttons { justify-content: center; }
+            .search-wrapper { flex-wrap: wrap; border-radius: 30px; }
+            .search-wrapper input { width: 100%; border-radius: 30px; padding: 12px 16px; }
+            .search-wrapper button { width: 100%; border-radius: 30px; margin-top: 6px; padding: 10px; }
+            .grid-container { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .grid-item { padding: 16px 8px; }
+            .grid-item .icon { font-size: 1.6rem; }
+            .grid-item .label { font-size: 0.7rem; }
+            .quick-actions a { font-size: 0.75rem; padding: 6px 14px; }
+        }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <div class="header-card">
+        <div class="logo">
+            <i class="bi bi-building"></i>
+            <div>
+                <h1>One City Developers Ltd.</h1>
+                <p>Land Sales Office | Gulshan-1, Dhaka</p>
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <a href="/" class="home-btn"><i class="bi bi-house-door me-1"></i>Home</a>
+            <a href="/accounts"><i class="bi bi-wallet2 me-1"></i>Accounts</a>
+            <a href="/google-config" class="btn btn-outline-light btn-sm"><i class="bi bi-google me-1"></i>Sync</a>
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeToggleBtn">
+                <i class="bi bi-moon-fill" id="themeIcon"></i> <span id="themeLabel">Dark</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="search-wrapper">
+        <input type="text" id="searchInput" placeholder="Search by Name, ID, File No, Project...">
+        <button onclick="search()"><i class="bi bi-search me-2"></i>Search</button>
+    </div>
+    <div class="status-bar">
+        <span id="status" class="text-muted"></span>
+        <span><button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="checkDB()"><i class="bi bi-bar-chart me-1"></i>DB Stats</button> <span id="dbStats" class="badge-stats"></span></span>
+    </div>
+
+    <div class="category-title"><i class="bi bi-grid-3x3-gap-fill me-2"></i>Main Modules</div>
+    <div class="grid-container">
+        <a href="/client-ledgers" class="grid-item">
+            <span class="icon"><i class="bi bi-person-lines-fill"></i></span>
+            <span class="label">Client Ledger</span>
+        </a>
+        <a href="/emi-track" class="grid-item">
+            <span class="icon"><i class="bi bi-clock-history"></i></span>
+            <span class="label">EMI Book</span>
+        </a>
+        <a href="/employees-list" class="grid-item">
+            <span class="icon"><i class="bi bi-people"></i></span>
+            <span class="label">Employee Book</span>
+        </a>
+        <a href="/admin" class="grid-item">
+            <span class="icon"><i class="bi bi-shield-lock"></i></span>
+            <span class="label">Admin Panel</span>
+        </a>
+    </div>
+
+    <div class="category-title"><i class="bi bi-link-45deg me-2"></i>Quick Actions</div>
+    <div class="quick-actions">
+        <a href="/accounts" class="btn btn-outline-primary rounded-pill"><i class="bi bi-wallet2 me-1"></i>Accounts</a>
+        <a href="/add-collection" class="btn btn-success rounded-pill"><i class="bi bi-plus-circle me-1"></i>Add Collection</a>
+        <a href="/collections" class="btn btn-info rounded-pill text-white"><i class="bi bi-list-ul me-1"></i>All Collections</a>
+        <a href="/google-config" class="btn btn-warning rounded-pill"><i class="bi bi-google me-1"></i>Sync Google</a>
+    </div>
+
+    <div id="results" class="mt-3"></div>
+</div>
+
+<script>
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-bs-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-bs-theme', next);
+    localStorage.setItem('theme', next);
+    updateThemeUI(next);
+}
+function updateThemeUI(theme) {
+    const icon = document.getElementById('themeIcon');
+    const label = document.getElementById('themeLabel');
+    if (icon && label) {
+        if (theme === 'dark') { icon.className = 'bi bi-sun-fill'; label.textContent = 'Light'; }
+        else { icon.className = 'bi bi-moon-fill'; label.textContent = 'Dark'; }
+    }
+}
+(function() {
+    const saved = localStorage.getItem('theme');
+    if (saved) {
+        document.documentElement.setAttribute('data-bs-theme', saved);
+        updateThemeUI(saved);
+    }
+})();
+
+function search() {
+    const q = document.getElementById('searchInput').value.trim();
+    if (!q) { document.getElementById('results').innerHTML = '<div class="alert alert-warning rounded-4">Please enter something</div>'; return; }
+    document.getElementById('status').innerHTML = '<i class="bi bi-arrow-repeat me-1"></i> Searching...';
+    fetch(`/api/search?q=${encodeURIComponent(q)}`)
+        .then(res => res.json())
+        .then(data => {
+            let html = '';
+            if (data.employees?.length) {
+                html += `<div class="section-title"><i class="bi bi-people me-2"></i>Employees (${data.employees.length})</div><div class="data-card"><div class="table-responsive"><table class="table table-custom"><thead><tr><th>Name</th><th>Designation</th><th>Team</th><th>Contact</th></tr></thead><tbody>`;
+                data.employees.forEach(e => html += `<tr><td><strong>${e.name||''}</strong></td><td>${e.designation||''}</td><td>${e.team||''}</td><td>${e.office_contact||''}</td></tr>`);
+                html += `</tbody></table></div></div>`;
+            }
+            if (data.clients?.length) {
+                html += `<div class="section-title"><i class="bi bi-person-lines-fill me-2"></i>Clients (${data.clients.length})</div><div class="data-card"><div class="table-responsive"><table class="table table-custom"><thead><tr><th>Name</th><th>Project</th><th>Unit</th><th>Action</th></tr></thead><tbody>`;
+                data.clients.forEach(c => html += `<tr><td><strong>${c.name||''}</strong><br><span class="text-muted small">${c.contact||''}</span></td><td>${c.project||''}</td><td>${c.unit_plot||''}</td><td><a href="/client-ledger/${c.id}" class="btn btn-outline-info btn-sm"><i class="bi bi-journal-bookmark-fill me-1"></i>Ledger</a></td></tr>`);
+                html += `</tbody></table></div></div>`;
+            }
+            if (data.bookings?.length) {
+                html += `<div class="section-title"><i class="bi bi-file-earmark-text me-2"></i>Bookings (${data.bookings.length})</div><div class="data-card"><div class="table-responsive"><table class="table table-custom"><thead><tr><th>File</th><th>Client</th><th>Project</th><th>EMI</th><th>Due (Tk)</th><th>DP Recv</th></tr></thead><tbody>`;
+                data.bookings.forEach(b => html += `<tr><td><strong>${b.file_no||''}</strong></td><td>${b.client_name||''}</td><td>${b.project||''}</td><td>${b.monthly_emi||''}</td><td><span class="badge bg-danger">${b.total_due_taka||0}</span></td><td>${b.dp_received||0}</td></tr>`);
+                html += `</tbody></table></div></div>`;
+            }
+            if (data.collections?.length) {
+                html += `<div class="section-title"><i class="bi bi-cash-stack me-2"></i>Collections (${data.collections.length})</div><div class="data-card"><div class="table-responsive"><table class="table table-custom"><thead><tr><th>MR No</th><th>Client</th><th>Sales Person</th><th>Type</th><th>Cash</th><th>Online</th><th>Clear Chq</th><th>Adv Chq</th><th>Dish Chq</th></tr></thead><tbody>`;
+                data.collections.forEach(col => {
+                    html += `<tr><td><strong>${col.mr_no||''}</strong></td><td>${col.client_name||''}</td><td>${col.sales_person||''}</td><td><span class="badge bg-light text-dark">${col.mr_type||''}</span></td><td>${col.cash||0}</td><td>${col.dd_ft_online||0}</td><td>${col.clear_cheque||0}</td><td>${col.advance_cheque||0}</td><td>${col.dishonour_cheque||0}</td></tr>`;
+                });
+                html += `</tbody></table></div></div>`;
+            }
+            if (data.chq_register?.length) {
+                html += `<div class="section-title"><i class="bi bi-check2-square me-2"></i>CHQ Register (${data.chq_register.length})</div><div class="data-card"><div class="table-responsive"><table class="table table-custom"><thead><tr><th>MR No</th><th>Client</th><th>Bank</th><th>Cheque No</th><th>Amount</th></tr></thead><tbody>`;
+                data.chq_register.forEach(row => html += `<tr><td>${row.mr_no||''}</td><td>${row.client_name||''}</td><td>${row.bank||''}</td><td>${row.cheque_no||''}</td><td>${row.amount||0}</td></tr>`);
+                html += `</tbody></table></div></div>`;
+            }
+            if (data.conveyance?.length) {
+                html += `<div class="section-title"><i class="bi bi-car-front me-2"></i>Conveyance (${data.conveyance.length})</div><div class="data-card"><div class="table-responsive"><table class="table table-custom"><thead><tr><th>Employee</th><th>Purpose</th><th>Client</th><th>Amount</th></tr></thead><tbody>`;
+                data.conveyance.forEach(row => html += `<tr><td>${row.employee||''}</td><td>${row.purpose||''}</td><td>${row.client_name||''}</td><td>${row.amount||0}</td></tr>`);
+                html += `</tbody></table></div></div>`;
+            }
+            if (data.salary?.length) {
+                html += `<div class="section-title"><i class="bi bi-cash me-2"></i>Salary (${data.salary.length})</div><div class="data-card"><div class="table-responsive"><table class="table table-custom"><thead><tr><th>Month</th><th>Employee</th><th>Gross</th><th>Payable</th><th>Paid</th><th>Due</th></tr></thead><tbody>`;
+                data.salary.forEach(row => html += `<tr><td>${row.month||''}</td><td>${row.employee||''}</td><td>${row.gross_salary||0}</td><td>${row.payable_salary||0}</td><td>${row.paid_taka||0}</td><td>${row.due_salary||0}</td></tr>`);
+                html += `</tbody></table></div></div>`;
+            }
+            if (data.car_requisition?.length) {
+                html += `<div class="section-title"><i class="bi bi-truck me-2"></i>Car Requisition (${data.car_requisition.length})</div><div class="data-card"><div class="table-responsive"><table class="table table-custom"><thead><tr><th>Date</th><th>Employee</th><th>Purpose</th><th>Client</th></tr></thead><tbody>`;
+                data.car_requisition.forEach(row => html += `<tr><td>${row.visit_date||''}</td><td>${row.employee||''}</td><td>${row.purpose||''}</td><td>${row.client_name||''}</td></tr>`);
+                html += `</tbody></table></div></div>`;
+            }
+            if (data.deed_movement?.length) {
+                html += `<div class="section-title"><i class="bi bi-file-earmark-text me-2"></i>Deed Movement (${data.deed_movement.length})</div><div class="data-card"><div class="table-responsive"><table class="table table-custom"><thead><tr><th>File No</th><th>Client</th><th>Status</th><th>Delivered To</th></tr></thead><tbody>`;
+                data.deed_movement.forEach(row => html += `<tr><td>${row.file_no||''}</td><td>${row.client_name||''}</td><td>${row.deed_status||''}</td><td>${row.delivered_to||''}</td></tr>`);
+                html += `</tbody></table></div></div>`;
+            }
+            if (data.token_money?.length) {
+                html += `<div class="section-title"><i class="bi bi-coin me-2"></i>Token Money (${data.token_money.length})</div><div class="data-card"><div class="table-responsive"><table class="table table-custom"><thead><tr><th>MR No</th><th>Client</th><th>Type</th><th>Cash</th></tr></thead><tbody>`;
+                data.token_money.forEach(row => html += `<tr><td>${row.mr_no||''}</td><td>${row.client_name||''}</td><td>${row.mr_type||''}</td><td>${row.cash||0}</td></tr>`);
+                html += `</tbody></table></div></div>`;
+            }
+            if (data.courier?.length) {
+                html += `<div class="section-title"><i class="bi bi-envelope me-2"></i>Courier (${data.courier.length})</div><div class="data-card"><div class="table-responsive"><table class="table table-custom"><thead><tr><th>Date</th><th>Sender</th><th>Client</th><th>Courier</th></tr></thead><tbody>`;
+                data.courier.forEach(row => html += `<tr><td>${row.date||''}</td><td>${row.sender_name||''}</td><td>${row.client_name||''}</td><td>${row.courier_name||''}</td></tr>`);
+                html += `</tbody></table></div></div>`;
+            }
+            if (data.hotel_reservation?.length) {
+                html += `<div class="section-title"><i class="bi bi-building me-2"></i>Hotel (${data.hotel_reservation.length})</div><div class="data-card"><div class="table-responsive"><table class="table table-custom"><thead><tr><th>Client</th><th>Project</th><th>Expected</th><th>Realized</th></tr></thead><tbody>`;
+                data.hotel_reservation.forEach(row => html += `<tr><td>${row.client_name||''}</td><td>${row.project||''}</td><td>${row.expected_collection||0}</td><td>${row.realized_amount||0}</td></tr>`);
+                html += `</tbody></table></div></div>`;
+            }
+            if (data.gift_ledger?.length) {
+                html += `<div class="section-title"><i class="bi bi-gift me-2"></i>Gift (${data.gift_ledger.length})</div><div class="data-card"><div class="table-responsive"><table class="table table-custom"><thead><tr><th>Date</th><th>Client</th><th>Item</th><th>Value</th></tr></thead><tbody>`;
+                data.gift_ledger.forEach(row => html += `<tr><td>${row.gift_date||''}</td><td>${row.client_name||''}</td><td>${row.item_name||''}</td><td>${row.gift_value||0}</td></tr>`);
+                html += `</tbody></table></div></div>`;
+            }
+            if (data.mr_delivery?.length) {
+                html += `<div class="section-title"><i class="bi bi-truck-front me-2"></i>MR Delivery (${data.mr_delivery.length})</div><div class="data-card"><div class="table-responsive"><table class="table table-custom"><thead><tr><th>MR No</th><th>Client</th><th>Amount</th><th>Received By</th></tr></thead><tbody>`;
+                data.mr_delivery.forEach(row => html += `<tr><td>${row.mr_no||''}</td><td>${row.client_name||''}</td><td>${row.amount||0}</td><td>${row.received_by||''}</td></tr>`);
+                html += `</tbody></table></div></div>`;
+            }
+            if (!html) html = '<div class="alert alert-info rounded-4">No results found</div>';
+            document.getElementById('results').innerHTML = html;
+            const total = (data.employees?.length||0)+(data.clients?.length||0)+(data.bookings?.length||0)+(data.collections?.length||0)+(data.chq_register?.length||0)+(data.conveyance?.length||0)+(data.salary?.length||0);
+            document.getElementById('status').innerHTML = `✅ ${total} records found.`;
+        })
+        .catch(err => { document.getElementById('results').innerHTML = `<div class="alert alert-danger">Error: ${err.message}</div>`; document.getElementById('status').innerHTML = ''; });
+}
+function checkDB() {
+    fetch('/api/db_stats').then(r=>r.json()).then(d => {
+        document.getElementById('dbStats').innerHTML = `👤 ${d.employees} | 🧑‍💼 ${d.clients} | 📄 ${d.bookings} | 💰 ${d.collections}`;
+    });
+}
+document.getElementById('searchInput').addEventListener('keyup', e => { if(e.key==='Enter') search(); });
+if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/static/sw.js'); }
+</script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Employee Book</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f4f7fc; --bg-card: #ffffff; --bg-header: linear-gradient(145deg, #0a2540, #1a3a5c);
+            --text-primary: #0a2540; --text-secondary: #64748b; --border-color: #e9edf2;
+            --shadow: 0 10px 30px rgba(10,37,64,0.12); --radius: 24px; --transition: 0.3s ease;
+        }
+        [data-bs-theme="dark"] {
+            --bg-body: #0f1724; --bg-card: #1a2634; --bg-header: linear-gradient(145deg, #0d1b2a, #1a2a3d);
+            --text-primary: #e8edf4; --text-secondary: #94a3b8; --border-color: #2a3a4a; --shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        * { font-family: 'Inter', sans-serif; }
+        body { background: var(--bg-body); color: var(--text-primary); padding: 15px; transition: background var(--transition), color var(--transition); }
+        .header-card {
+            background: var(--bg-header); border-radius: var(--radius); padding: 18px 24px; margin-bottom: 20px; box-shadow: var(--shadow);
+            color: white; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+        }
+        .header-card h2 { font-weight: 800; font-size: 1.2rem; margin: 0; }
+        .header-card .nav-buttons { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .header-card .nav-buttons a, .header-card .nav-buttons .theme-toggle {
+            color: white; text-decoration: none; background: rgba(255,255,255,0.12);
+            padding: 6px 14px; border-radius: 60px; font-size: 0.75rem;
+            transition: var(--transition); display: inline-flex; align-items: center; gap: 4px;
+            border: none; cursor: pointer;
+        }
+        .header-card .nav-buttons a:hover, .header-card .nav-buttons .theme-toggle:hover { background: rgba(255,255,255,0.25); }
+        .data-card { background: var(--bg-card); border-radius: 20px; padding: 16px; border: 1px solid var(--border-color); }
+        .table-custom { font-size: 0.8rem; color: var(--text-primary); }
+        .table-custom th { background: var(--bg-body); font-weight: 600; color: var(--text-primary); border-bottom: 2px solid var(--border-color); padding: 8px 6px; cursor: pointer; }
+        .table-custom td { padding: 8px 6px; vertical-align: middle; }
+        .table-custom tr:hover { background: var(--bg-body); }
+        .search-box { max-width: 400px; margin-bottom: 14px; }
+        .search-box input { background: var(--bg-card); color: var(--text-primary); border-color: var(--border-color); border-radius: 60px; padding: 6px 16px; width: 100%; }
+        @media (max-width: 640px) { .header-card { flex-direction: column; align-items: stretch; text-align: center; } .search-box { max-width: 100%; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header-card">
+        <h2><i class="bi bi-people me-2"></i>Employee Book</h2>
+        <div class="nav-buttons">
+            <a href="/"><i class="bi bi-arrow-left me-1"></i>Back</a>
+            <button class="theme-toggle" onclick="toggleTheme()"><i class="bi bi-moon-fill" id="themeIcon"></i> <span id="themeLabel">Dark</span></button>
+        </div>
+    </div>
+    <div class="data-card">
+        <div class="search-box"><input type="text" id="searchInput" placeholder="Search by name, designation, team..." onkeyup="filterTable()"></div>
+        <div class="table-responsive">
+            <table class="table table-custom table-hover" id="dataTable">
+                <thead><tr>
+                    <th onclick="sortTable('dataTable', 0)">Name</th>
+                    <th onclick="sortTable('dataTable', 1)">Designation</th>
+                    <th onclick="sortTable('dataTable', 2)">Team</th>
+                    <th onclick="sortTable('dataTable', 3)">Joining</th>
+                    <th onclick="sortTable('dataTable', 4)">Contact</th>
+                </tr></thead>
+                <tbody>
+                    {% for e in employees %}
+                    <tr class="emp-row">
+                        <td><strong>{{ e.name }}</strong></td>
+                        <td>{{ e.designation }}</td>
+                        <td>{{ e.team }}</td>
+                        <td>{{ e.joining_date }}</td>
+                        <td>{{ e.office_contact }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+function toggleTheme() { /* same */ }
+function updateThemeUI(theme) { /* same */ }
+(function() { /* same */ })();
+function filterTable() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('.emp-row').forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(q) ? '' : 'none';
+    });
+}
+function sortTable(tableId, col) { /* same */ }
+</script>
+</body>
+</html>

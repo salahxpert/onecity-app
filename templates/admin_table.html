@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Admin - {{ table }}{% endblock %}
+{% block page_title %}{{ table }}{% endblock %}
+
+{% block extra_links %}
+<a href="/admin"><i class="bi bi-arrow-left me-1"></i>Dashboard</a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .table-custom { font-size: 0.8rem; color: var(--text-primary); }
+    .table-custom th { background: var(--bg-body); font-weight: 600; color: var(--text-primary); border-bottom: 2px solid var(--border-color); white-space: nowrap; }
+    .table-custom td { vertical-align: middle; }
+    .table-custom tr:hover { background: var(--bg-body); }
+    .action-btn { padding: 2px 8px; border-radius: 30px; font-size: 0.65rem; }
+    .search-box { max-width: 400px; margin-bottom: 18px; }
+    .pagination .page-link { background: var(--bg-card); color: var(--text-primary); border-color: var(--border-color); }
+    @media (max-width: 640px) { .table-custom { font-size: 0.7rem; } .search-box { max-width: 100%; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <div class="search-box flex-grow-1">
+        <form method="GET" action="">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control rounded-pill rounded-end" placeholder="Search in {{ table }}..." value="{{ search_q or '' }}" style="background:var(--bg-card);color:var(--text-primary);border-color:var(--border-color);">
+                <button class="btn btn-primary rounded-pill rounded-start ms-1" type="submit"><i class="bi bi-search"></i></button>
+            </div>
+        </form>
+    </div>
+    <div><span class="text-muted small">Total: {{ total }} rows</span></div>
+</div>
+<div class="bg-white p-3 rounded-4 shadow-sm" style="background:var(--bg-card) !important;border:1px solid var(--border-color);">
+    <div class="table-responsive">
+        <table class="table table-custom table-hover">
+            <thead><tr>
+                {% for col in columns %}<th>{{ col.replace('_', ' ').upper() }}</th>{% endfor %}
+                <th>ACTIONS</th>
+            </tr></thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    {% for col in columns %}<td>{{ row[col] if row[col] is not none else '-' }}</td>{% endfor %}
+                    <td>
+                        <a href="/admin/{{ table }}/{{ row.id }}/edit?q={{ search_q }}" class="btn btn-primary btn-sm action-btn"><i class="bi bi-pencil"></i></a>
+                        <button class="btn btn-danger btn-sm action-btn" onclick="deleteRow('{{ table }}', {{ row.id }})"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="{{ columns|length + 1 }}" class="text-center text-muted py-3"><i class="bi bi-info-circle me-2"></i>No data found</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if total_pages > 1 %}
+    <nav><ul class="pagination justify-content-center flex-wrap">
+        {% for p in range(1, total_pages + 1) %}
+        <li class="page-item {% if p == page %}active{% endif %}"><a class="page-link" href="?q={{ search_q }}&page={{ p }}">{{ p }}</a></li>
+        {% endfor %}
+    </ul></nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function deleteRow(table, id) {
+    if (!confirm('Are you sure you want to delete this record?')) return;
+    fetch(`/admin/${table}/${id}/delete`, { method: 'POST' })
+        .then(res => res.json())
+        .then(data => { if (data.success) location.reload(); else alert('Delete failed'); })
+        .catch(() => alert('Delete failed'));
+}
+</script>
+{% endblock %}

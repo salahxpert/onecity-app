@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Edit {{ table }}{% endblock %}
+{% block page_title %}Edit {{ table }}{% endblock %}
+
+{% block extra_links %}
+<a href="/admin/{{ table }}"><i class="bi bi-arrow-left me-1"></i>Back</a>
+<a href="/admin"><i class="bi bi-shield-lock me-1"></i>Dashboard</a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card { border-radius: 20px; background: var(--bg-card); border: 1px solid var(--border-color); }
+    .form-control { background: var(--bg-body); color: var(--text-primary); border-color: var(--border-color); }
+    .form-control:focus { border-color: #0a2540; box-shadow: 0 0 0 0.25rem rgba(10,37,64,0.15); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card p-4">
+    <form method="POST">
+        {% for col in columns %}
+            {% if col != 'id' %}
+            <div class="mb-3">
+                <label class="form-label fw-semibold">{{ col.replace('_', ' ').upper() }}</label>
+                <input type="text" class="form-control" name="{{ col }}" value="{{ row[col] if row[col] is not none else '' }}">
+            </div>
+            {% endif %}
+        {% endfor %}
+        <button type="submit" class="btn btn-success rounded-pill px-4"><i class="bi bi-save me-1"></i>Update</button>
+        <a href="/admin/{{ table }}" class="btn btn-secondary rounded-pill px-4"><i class="bi bi-x-circle me-1"></i>Cancel</a>
+    </form>
+</div>
+{% endblock %}
