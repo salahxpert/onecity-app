@@ -1,0 +1,83 @@
+{
+  "name": "One City Search",
+  "short_name": "OCSearch",
+  "description": "Search Client, Employee & Collections",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f6f9",
+  "theme_color": "#0d6efd",
+  "orientation": "portrait",
+  "id": "onecity-app",
+  "lang": "en",
+  "dir": "ltr",
+  "scope": "/",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "/static/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/static/screenshot-1.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Dashboard"
+    },
+    {
+      "src": "/static/screenshot-2.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Accounts"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Add Collection",
+      "short_name": "Add",
+      "description": "Add new MR collection",
+      "url": "/add-collection",
+      "icons": [
+        {
+          "src": "/static/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Accounts",
+      "short_name": "Accounts",
+      "description": "View accounts dashboard",
+      "url": "/accounts",
+      "icons": [
+        {
+          "src": "/static/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/add-collection",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "client_name",
+      "url": "url"
+    }
+  }
+}
