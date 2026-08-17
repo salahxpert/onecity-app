@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="theme-color" content="#0a2540">
+    
+    <!-- iOS Meta Tags (NEW) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <link rel="manifest" href="/manifest.json">
+    <title>{% block title %}One City Admin{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f4f7fc;
+            --bg-card: #ffffff;
+            --bg-header: linear-gradient(145deg, #0a2540, #1a3a5c);
+            --text-primary: #0a2540;
+            --text-secondary: #64748b;
+            --border-color: #e9edf2;
+            --shadow: 0 20px 40px rgba(10, 37, 64, 0.12);
+            --radius: 28px;
+            --transition: 0.3s ease;
+        }
+        [data-bs-theme="dark"] {
+            --bg-body: #0f1724;
+            --bg-card: #1a2634;
+            --bg-header: linear-gradient(145deg, #0d1b2a, #1a2a3d);
+            --text-primary: #e8edf4;
+            --text-secondary: #94a3b8;
+            --border-color: #2a3a4a;
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        * { font-family: 'Inter', sans-serif; }
+        body { background: var(--bg-body); color: var(--text-primary); padding: 15px; transition: background var(--transition), color var(--transition); }
+        .header-card {
+            background: var(--bg-header);
+            border-radius: var(--radius);
+            padding: 18px 24px;
+            margin-bottom: 25px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            box-shadow: var(--shadow);
+            transition: background var(--transition);
+        }
+        .header-card h2 { font-weight: 800; margin: 0; font-size: 1.3rem; }
+        .header-card .nav-links a, .header-card .nav-links .theme-toggle {
+            color: white;
+            text-decoration: none;
+            background: rgba(255,255,255,0.12);
+            padding: 6px 14px;
+            border-radius: 60px;
+            font-size: 0.75rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border: none;
+            cursor: pointer;
+        }
+        .header-card .nav-links a:hover, .header-card .nav-links .theme-toggle:hover { background: rgba(255,255,255,0.25); }
+        .footer-text { text-align: center; margin-top: 30px; color: var(--text-secondary); font-size: 0.8rem; }
+        @media (max-width: 640px) {
+            .header-card { flex-direction: column; align-items: stretch; text-align: center; }
+            .header-card .nav-links { justify-content: center; flex-wrap: wrap; }
+        }
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header-card">
+        <h2><i class="bi bi-shield-lock me-2"></i>{% block page_title %}Admin Panel{% endblock %}</h2>
+        <div class="nav-links">
+            <a href="/"><i class="bi bi-house-door me-1"></i>Home</a>
+            <a href="/accounts"><i class="bi bi-wallet2 me-1"></i>Accounts</a>
+            <a href="/admin"><i class="bi bi-shield-lock me-1"></i>Admin</a>
+            {% block extra_links %}{% endblock %}
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeToggleBtn">
+                <i class="bi bi-moon-fill" id="themeIcon"></i> <span id="themeLabel">Dark</span>
+            </button>
+        </div>
+    </div>
+    {% block content %}{% endblock %}
+    <div class="footer-text">One City Developers Ltd. &bull; Land Sales Office &bull; Dhaka</div>
+</div>
+<script>
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-bs-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-bs-theme', next);
+    localStorage.setItem('theme', next);
+    updateThemeUI(next);
+}
+function updateThemeUI(theme) {
+    const icon = document.getElementById('themeIcon');
+    const label = document.getElementById('themeLabel');
+    if (icon && label) {
+        if (theme === 'dark') { icon.className = 'bi bi-sun-fill'; label.textContent = 'Light'; }
+        else { icon.className = 'bi bi-moon-fill'; label.textContent = 'Dark'; }
+    }
+}
+(function() {
+    const saved = localStorage.getItem('theme');
+    if (saved) {
+        document.documentElement.setAttribute('data-bs-theme', saved);
+        updateThemeUI(saved);
+    }
+})();
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+        .then(function(registration) {
+            console.log('Service Worker registered successfully:', registration);
+        })
+        .catch(function(error) {
+            console.log('Service Worker registration failed:', error);
+        });
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
