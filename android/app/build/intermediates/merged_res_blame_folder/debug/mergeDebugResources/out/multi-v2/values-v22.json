@@ -1,0 +1,24 @@
+{
+    "logs": [
+        {
+<<<<<<< Updated upstream
+            "outputFile": "com.onecity.app-mergeDebugResources-19:/values-v22/values-v22.xml",
+=======
+            "outputFile": "com.onecity.app-mergeDebugResources-20:/values-v22/values-v22.xml",
+>>>>>>> Stashed changes
+            "map": [
+                {
+                    "source": "C:\\Users\\salahuddin\\.gradle\\caches\\9.5.0\\transforms\\66bb04da7c53152a1306a71d5db98932\\transformed\\appcompat-1.6.1\\res\\values-v22\\values-v22.xml",
+                    "from": {
+                        "startLines": "2,3,4,9",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,130,217,487",
+                        "endLines": "2,3,8,13",
+                        "endColumns": "74,86,12,12",
+                        "endOffsets": "125,212,482,764"
+                    }
+                }
+            ]
+        }
+    ]
+}

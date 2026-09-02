@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Edit MR</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f4f7fc; --bg-card: #ffffff; --bg-header: linear-gradient(145deg, #0a2540, #1a3a5c);
+            --text-primary: #0a2540; --text-secondary: #64748b; --border-color: #e9edf2;
+            --shadow: 0 10px 30px rgba(10,37,64,0.12); --radius: 24px; --transition: 0.3s ease;
+        }
+        [data-bs-theme="dark"] {
+            --bg-body: #0f1724; --bg-card: #1a2634; --bg-header: linear-gradient(145deg, #0d1b2a, #1a2a3d);
+            --text-primary: #e8edf4; --text-secondary: #94a3b8; --border-color: #2a3a4a; --shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        * { font-family: 'Inter', sans-serif; }
+        body { background: var(--bg-body); color: var(--text-primary); padding: 15px; transition: background var(--transition), color var(--transition); }
+        .header-card {
+            background: var(--bg-header); border-radius: var(--radius); padding: 18px 24px; margin-bottom: 20px; box-shadow: var(--shadow);
+            color: white; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+        }
+        .header-card h2 { font-weight: 800; font-size: 1.2rem; margin: 0; }
+        .header-card .nav-buttons { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .header-card .nav-buttons a, .header-card .nav-buttons .theme-toggle {
+            color: white; text-decoration: none; background: rgba(255,255,255,0.12);
+            padding: 6px 14px; border-radius: 60px; font-size: 0.75rem;
+            transition: var(--transition); display: inline-flex; align-items: center; gap: 4px;
+            border: none; cursor: pointer;
+        }
+        .header-card .nav-buttons a:hover, .header-card .nav-buttons .theme-toggle:hover { background: rgba(255,255,255,0.25); }
+        .card { background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border-color); padding: 20px; }
+        .form-control, .form-select { background: var(--bg-body); color: var(--text-primary); border-color: var(--border-color); border-radius: 12px; padding: 10px 14px; }
+        .form-control:focus, .form-select:focus { border-color: #0a2540; box-shadow: 0 0 0 0.2rem rgba(10,37,64,0.1); }
+        .btn-rounded { border-radius: 30px; padding: 10px 28px; font-weight: 600; }
+        @media (max-width: 640px) { .header-card { flex-direction: column; align-items: stretch; text-align: center; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header-card">
+        <h2><i class="bi bi-pencil me-2"></i>Edit Collection (MR)</h2>
+        <div class="nav-buttons">
+            <a href="/"><i class="bi bi-house-door me-1"></i>Home</a>
+            <a href="/accounts"><i class="bi bi-arrow-left me-1"></i>Accounts</a>
+            <button class="theme-toggle" onclick="toggleTheme()"><i class="bi bi-moon-fill" id="themeIcon"></i> <span id="themeLabel">Dark</span></button>
+        </div>
+    </div>
+    <div class="card">
+        <form id="editForm">
+            <div class="row g-3">
+                <div class="col-md-4"><label class="form-label fw-semibold">MR No</label><input type="text" class="form-control" name="mr_no" value="{{ mr.mr_no }}" required></div>
+                <div class="col-md-4"><label class="form-label fw-semibold">Client Name</label><input type="text" class="form-control" name="client_name" value="{{ mr.client_name }}" required></div>
+                <div class="col-md-4"><label class="form-label fw-semibold">Project</label><input type="text" class="form-control" name="project" value="{{ mr.project }}" required></div>
+                <div class="col-md-4"><label class="form-label fw-semibold">Collection Date</label><input type="date" class="form-control" name="collection_date" value="{{ mr.collection_date }}" required></div>
+                <div class="col-md-4"><label class="form-label fw-semibold">Unit</label><input type="number" class="form-control" name="unit" value="{{ mr.unit or 1 }}"></div>
+                <div class="col-md-4"><label class="form-label fw-semibold">MR Type</label><select class="form-select" name="mr_type"><option value="Booking" {% if mr.mr_type=='Booking' %}selected{% endif %}>Booking</option><option value="Installment" {% if mr.mr_type=='Installment' %}selected{% endif %}>Installment</option><option value="Token" {% if mr.mr_type=='Token' %}selected{% endif %}>Token</option></select></div>
+                <div class="col-md-6"><label class="form-label fw-semibold">Cash</label><input type="number" step="0.01" class="form-control" name="cash" value="{{ mr.cash or 0 }}"></div>
+                <div class="col-md-6"><label class="form-label fw-semibold">Online (DD/FT)</label><input type="number" step="0.01" class="form-control" name="dd_ft_online" value="{{ mr.dd_ft_online or 0 }}"></div>
+                <div class="col-md-4"><label class="form-label fw-semibold">Clear Cheque</label><input type="number" step="0.01" class="form-control" name="clear_cheque" value="{{ mr.clear_cheque or 0 }}"></div>
+                <div class="col-md-4"><label class="form-label fw-semibold">Advance Cheque</label><input type="number" step="0.01" class="form-control" name="advance_cheque" value="{{ mr.advance_cheque or 0 }}"></div>
+                <div class="col-md-4"><label class="form-label fw-semibold">Dishonour Cheque</label><input type="number" step="0.01" class="form-control" name="dishonour_cheque" value="{{ mr.dishonour_cheque or 0 }}"></div>
+                <div class="col-md-6"><label class="form-label fw-semibold">Cheque Status</label><input type="text" class="form-control" name="cheque_status" value="{{ mr.cheque_status or '' }}"></div>
+                <div class="col-md-6"><label class="form-label fw-semibold">Source Sheet</label><select class="form-select" name="source_sheet">{% for sheet in sheets %}<option value="{{ sheet.source_sheet }}" {% if sheet.source_sheet == mr.source_sheet %}selected{% endif %}>{{ sheet.source_sheet }}</option>{% endfor %}<option value="Manual Entry">Manual Entry</option></select></div>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary btn-rounded"><i class="bi bi-save me-1"></i>Update</button>
+                <span id="msg" class="ms-3 text-muted"></span>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-bs-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-bs-theme', next);
+    localStorage.setItem('theme', next);
+    updateThemeUI(next);
+}
+function updateThemeUI(theme) {
+    const icon = document.getElementById('themeIcon');
+    const label = document.getElementById('themeLabel');
+    if (icon && label) {
+        if (theme === 'dark') { icon.className = 'bi bi-sun-fill'; label.textContent = 'Light'; }
+        else { icon.className = 'bi bi-moon-fill'; label.textContent = 'Dark'; }
+    }
+}
+(function() {
+    const saved = localStorage.getItem('theme');
+    if (saved) { document.documentElement.setAttribute('data-bs-theme', saved); updateThemeUI(saved); }
+})();
+
+document.getElementById('editForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    const mrId = {{ mr.id }};
+    document.getElementById('msg').innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Updating...';
+    try {
+        const res = await fetch(`/api/collection/${mrId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+        const result = await res.json();
+        if (result.success) { document.getElementById('msg').innerHTML = `<span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>${result.message}</span>`; setTimeout(() => { window.location.href = '/accounts'; }, 1500); }
+        else { document.getElementById('msg').innerHTML = `<span class="text-danger"><i class="bi bi-exclamation-triangle-fill me-1"></i>${result.error}</span>`; }
+    } catch(err) { document.getElementById('msg').innerHTML = `<span class="text-danger"><i class="bi bi-x-circle-fill me-1"></i>${err.message}</span>`; }
+});
+</script>
+</body>
+</html>

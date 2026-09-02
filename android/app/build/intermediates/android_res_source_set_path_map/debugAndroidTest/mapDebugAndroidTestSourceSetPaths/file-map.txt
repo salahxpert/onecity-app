@@ -1,0 +1,6 @@
+com.onecity.app.test.app-androidTest-0 D:\Mobile App\OneCityApp\android\app\build\generated\res\resValues\androidTest\debug
+com.onecity.app.test.app-updated_navigation_xml-1 D:\Mobile App\OneCityApp\android\app\build\generated\updated_navigation_xml\debugAndroidTest
+com.onecity.app.test.app-mergeDebugAndroidTestResources-2 D:\Mobile App\OneCityApp\android\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
+com.onecity.app.test.app-mergeDebugAndroidTestResources-3 D:\Mobile App\OneCityApp\android\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
+com.onecity.app.test.app-debugAndroidTest-4 D:\Mobile App\OneCityApp\android\app\build\intermediates\merged_res\debugAndroidTest\mergeDebugAndroidTestResources
+gradleHome-0 C:\Users\salahuddin\.gradle

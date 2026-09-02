@@ -1,0 +1,11 @@
+<<<<<<< Updated upstream
+#Thu Aug 27 11:41:55 BDT 2026
+=======
+#Wed Sep 02 12:24:42 BDT 2026
+>>>>>>> Stashed changes
+base.1=D\:\\Mobile App\\OneCityApp\\android\\app\\build\\intermediates\\global_synthetics_dex\\debugAndroidTest\\generateDebugAndroidTestGlobalSynthetics\\classes.dex
+path.1=classes.dex
+base.0=D\:\\Mobile App\\OneCityApp\\android\\app\\build\\intermediates\\dex\\debugAndroidTest\\mergeProjectDexDebugAndroidTest\\0\\classes.dex
+renamed.1=classes2.dex
+renamed.0=classes.dex
+path.0=0/classes.dex

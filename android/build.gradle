@@ -1,0 +1,28 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+<<<<<<< Updated upstream
+<<<<<<< HEAD
+        classpath 'com.android.tools.build:gradle:9.3.2'
+=======
+        classpath 'com.android.tools.build:gradle:8.2.0'
+>>>>>>> ccf1ffd62951814c7b42010c09fb9247cd8ab5bd
+=======
+        classpath 'com.android.tools.build:gradle:9.3.2'
+>>>>>>> Stashed changes
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+tasks.register('clean', Delete) {
+    delete rootProject.buildDir
+}

@@ -1,0 +1,11 @@
+Flask
+gspread
+oauth2client
+pandas
+requests
+bcrypt
+python-dotenv
+apscheduler
+Flask-JWT-Extended
+Pillow
+gunicorn

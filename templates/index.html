@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Search Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="p-4 bg-primary bg-opacity-10 rounded-4 shadow-sm">
+                <h4 class="fw-bold"><i class="bi bi-search"></i> Search Everything</h4>
+                <p class="text-muted">Search clients, employees, collections, or any record.</p>
+                <div class="input-group input-group-lg">
+                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-primary"></i></span>
+                    <input type="text" id="globalSearch" class="form-control border-start-0" placeholder="Type to search..." aria-label="Search">
+                    <button class="btn btn-primary" type="button" id="searchBtn">Search</button>
+                </div>
+                <div id="searchResults" class="mt-3 d-none"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Cards (4 Major Heads) -->
+    <div class="row g-4 mb-4">
+        <div class="col-6 col-lg-3">
+            <a href="/client-ledgers" class="text-decoration-none">
+                <div class="card h-100 text-center shadow-sm hover-card border-0">
+                    <div class="card-body p-4">
+                        <i class="bi bi-people-fill display-4 text-primary"></i>
+                        <h5 class="card-title mt-3 fw-bold">Client Ledger</h5>
+                        <p class="card-text text-muted small">View all clients & bookings</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a href="/emi-track" class="text-decoration-none">
+                <div class="card h-100 text-center shadow-sm hover-card border-0">
+                    <div class="card-body p-4">
+                        <i class="bi bi-coin display-4 text-success"></i>
+                        <h5 class="card-title mt-3 fw-bold">EMI Track</h5>
+                        <p class="card-text text-muted small">Manage EMI details</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a href="/employees-list" class="text-decoration-none">
+                <div class="card h-100 text-center shadow-sm hover-card border-0">
+                    <div class="card-body p-4">
+                        <i class="bi bi-person-badge display-4 text-warning"></i>
+                        <h5 class="card-title mt-3 fw-bold">Employee</h5>
+                        <p class="card-text text-muted small">Employee directory & salary</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a href="/admin" class="text-decoration-none">
+                <div class="card h-100 text-center shadow-sm hover-card border-0">
+                    <div class="card-body p-4">
+                        <i class="bi bi-speedometer2 display-4 text-danger"></i>
+                        <h5 class="card-title mt-3 fw-bold">Admin</h5>
+                        <p class="card-text text-muted small">Full database control</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row g-3 mb-4">
+        <div class="col-12">
+            <h5 class="fw-bold"><i class="bi bi-lightning-fill text-warning"></i> Quick Actions</h5>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="/accounts" class="btn btn-outline-secondary w-100 py-2">
+                <i class="bi bi-wallet2"></i> Accounts
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="/add-collection" class="btn btn-outline-success w-100 py-2">
+                <i class="bi bi-plus-circle"></i> Add Collection
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="/collections" class="btn btn-outline-primary w-100 py-2">
+                <i class="bi bi-list-ul"></i> All Collections
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="/google-config" class="btn btn-outline-info w-100 py-2">
+                <i class="bi bi-arrow-repeat"></i> Sync Google
+            </a>
+        </div>
+    </div>
+
+    <!-- Database Statistics -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="fw-bold"><i class="bi bi-database"></i> Database Stats</h5>
+                    <div id="dbStats" class="row g-3 mt-2">
+                        <div class="col-12 text-center">
+                            <div class="spinner-border text-secondary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- Global Search Logic ---
+        const searchInput = document.getElementById('globalSearch');
+        const searchBtn = document.getElementById('searchBtn');
+        const resultsDiv = document.getElementById('searchResults');
+
+        function performSearch() {
+            const query = searchInput.value.trim();
+            if (query.length < 2) {
+                resultsDiv.classList.add('d-none');
+                return;
+            }
+
+            fetch(`/api/search?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.results && data.results.length > 0) {
+                        let html = '<ul class="list-group">';
+                        data.results.forEach(item => {
+                            html += `<li class="list-group-item d-flex justify-content-between align-items-start">
+                                <div>
+                                    <strong>${item.table || 'Record'}</strong><br>
+                                    <small>${item.content || JSON.stringify(item)}</small>
+                                </div>
+                            </li>`;
+                        });
+                        html += '</ul>';
+                        resultsDiv.innerHTML = html;
+                        resultsDiv.classList.remove('d-none');
+                    } else {
+                        resultsDiv.innerHTML = '<div class="alert alert-info mt-2">No results found.</div>';
+                        resultsDiv.classList.remove('d-none');
+                    }
+                })
+                .catch(() => {
+                    resultsDiv.innerHTML = '<div class="alert alert-danger mt-2">Search failed.</div>';
+                    resultsDiv.classList.remove('d-none');
+                });
+        }
+
+        searchBtn.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        // --- Load Database Stats ---
+        function loadStats() {
+            const statsDiv = document.getElementById('dbStats');
+            fetch('/api/db_stats')
+                .then(response => response.json())
+                .then(data => {
+                    let html = '';
+                    let total = 0;
+                    const entries = Object.entries(data);
+                    // Show top 8 tables for brevity, or all
+                    entries.forEach(([key, value]) => {
+                        total += value;
+                        html += `<div class="col-6 col-md-3">
+                            <div class="border rounded p-2 text-center bg-light">
+                                <small class="text-muted">${key.replace(/_/g, ' ').toUpperCase()}</small>
+                                <div class="fw-bold">${value}</div>
+                            </div>
+                        </div>`;
+                    });
+                    // Add total row
+                    html += `<div class="col-12 mt-2 text-center fw-bold bg-primary bg-opacity-10 p-2 rounded">
+                        Total Records: ${total}
+                    </div>`;
+                    statsDiv.innerHTML = html;
+                })
+                .catch(() => {
+                    statsDiv.innerHTML = '<div class="col-12 text-danger">Failed to load statistics.</div>';
+                });
+        }
+        loadStats();
+
+        // Add custom hover styles for cards
+        const style = document.createElement('style');
+        style.textContent = `
+            .hover-card {
+                transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            }
+            .hover-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+            }
+        `;
+        document.head.appendChild(style);
+    });
+</script>
+{% endblock %}

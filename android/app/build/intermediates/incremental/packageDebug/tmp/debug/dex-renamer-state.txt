@@ -1,0 +1,17 @@
+<<<<<<< Updated upstream
+#Thu Aug 27 11:41:55 BDT 2026
+=======
+#Wed Sep 02 12:24:42 BDT 2026
+>>>>>>> Stashed changes
+path.3=classes.dex
+path.2=11/classes.dex
+path.1=0/classes.dex
+path.0=classes.dex
+base.3=D\:\\Mobile App\\OneCityApp\\android\\app\\build\\intermediates\\global_synthetics_dex\\debug\\generateDebugGlobalSynthetics\\classes.dex
+base.2=D\:\\Mobile App\\OneCityApp\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\11\\classes.dex
+base.1=D\:\\Mobile App\\OneCityApp\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
+base.0=D\:\\Mobile App\\OneCityApp\\android\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
+renamed.3=classes4.dex
+renamed.2=classes3.dex
+renamed.1=classes2.dex
+renamed.0=classes.dex

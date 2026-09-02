@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}Accounts Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2 class="fw-bold mb-4"><i class="bi bi-wallet2"></i> Accounts Dashboard</h2>
+
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-tabs nav-fill mb-4" id="accountTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="collections-tab" data-bs-toggle="tab" data-bs-target="#collections" type="button" role="tab" aria-controls="collections" aria-selected="true">
+                <i class="bi bi-list-ul"></i> Collections
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="salary-tab" data-bs-toggle="tab" data-bs-target="#salary" type="button" role="tab" aria-controls="salary" aria-selected="false">
+                <i class="bi bi-cash-stack"></i> Salary
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="conveyance-tab" data-bs-toggle="tab" data-bs-target="#conveyance" type="button" role="tab" aria-controls="conveyance" aria-selected="false">
+                <i class="bi bi-truck"></i> Conveyance
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tabs Content -->
+    <div class="tab-content" id="accountTabsContent">
+        <!-- Collections Tab -->
+        <div class="tab-pane fade show active" id="collections" role="tabpanel" aria-labelledby="collections-tab">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="fw-bold"><i class="bi bi-archive"></i> All Collections</h5>
+                    <div id="collectionsTableWrapper" class="table-responsive mt-3">
+                        <div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Salary Tab -->
+        <div class="tab-pane fade" id="salary" role="tabpanel" aria-labelledby="salary-tab">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold"><i class="bi bi-cash"></i> Salary Records</h5>
+                        <div>
+                            <button class="btn btn-sm btn-outline-secondary sort-salary" data-sort="asc">Sort Asc</button>
+                            <button class="btn btn-sm btn-outline-secondary sort-salary" data-sort="desc">Sort Desc</button>
+                        </div>
+                    </div>
+                    <div id="salaryTableWrapper" class="table-responsive">
+                        <div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conveyance Tab -->
+        <div class="tab-pane fade" id="conveyance" role="tabpanel" aria-labelledby="conveyance-tab">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold"><i class="bi bi-truck"></i> Conveyance Records</h5>
+                        <div class="btn-group" role="group" aria-label="Conveyance filter">
+                            <button class="btn btn-sm btn-outline-secondary filter-conveyance active" data-filter="all">All</button>
+                            <button class="btn btn-sm btn-outline-secondary filter-conveyance" data-filter="Pending">Pending</button>
+                            <button class="btn btn-sm btn-outline-secondary filter-conveyance" data-filter="Regular">Regular</button>
+                        </div>
+                    </div>
+                    <div id="conveyanceTableWrapper" class="table-responsive">
+                        <div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Helper: Render table from data
+        function renderTable(containerId, data, columns) {
+            const container = document.getElementById(containerId);
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No records found.</div>';
+                return;
+            }
+            let html = '<table class="table table-striped table-hover">';
+            // Header
+            html += '<thead class="table-light"><tr>';
+            columns.forEach(col => {
+                html += `<th>${col.charAt(0).toUpperCase() + col.slice(1).replace(/_/g, ' ')}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            // Rows
+            data.forEach(row => {
+                html += '<tr>';
+                columns.forEach(col => {
+                    let val = row[col] !== undefined && row[col] !== null ? row[col] : '-';
+                    // Special coloring for conveyance status
+                    if (col === 'status' || col === 'Status') {
+                        if (val === 'Regular' || val === 'Paid') {
+                            val = `<span class="badge bg-success">${val}</span>`;
+                        } else if (val === 'Pending') {
+                            val = `<span class="badge bg-danger">${val}</span>`;
+                        }
+                    }
+                    html += `<td>${val}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // Load Collections
+        function loadCollections() {
+            const wrapper = document.getElementById('collectionsTableWrapper');
+            fetch('/api/table/collections')
+                .then(res => res.json())
+                .then(data => {
+                    // Use first row keys as columns
+                    const cols = data.length > 0 ? Object.keys(data[0]) : ['id', 'client', 'amount', 'date'];
+                    renderTable('collectionsTableWrapper', data, cols);
+                })
+                .catch(() => {
+                    wrapper.innerHTML = '<div class="alert alert-danger">Failed to load collections.</div>';
+                });
+        }
+
+        // Load Salary (with sorting)
+        let salaryData = [];
+        let salaryCols = [];
+
+        function loadSalary() {
+            const wrapper = document.getElementById('salaryTableWrapper');
+            fetch('/api/table/salary')
+                .then(res => res.json())
+                .then(data => {
+                    salaryData = data;
+                    salaryCols = data.length > 0 ? Object.keys(data[0]) : ['employee', 'month', 'amount'];
+                    renderTable('salaryTableWrapper', salaryData, salaryCols);
+                })
+                .catch(() => {
+                    wrapper.innerHTML = '<div class="alert alert-danger">Failed to load salary.</div>';
+                });
+        }
+
+        function sortSalary(order) {
+            if (!salaryData.length) return;
+            const sorted = [...salaryData];
+            // Try to sort by 'month' or 'date' or first column
+            const sortKey = salaryCols.find(c => c.toLowerCase().includes('month') || c.toLowerCase().includes('date')) || salaryCols[0];
+            sorted.sort((a, b) => {
+                let valA = a[sortKey] || '';
+                let valB = b[sortKey] || '';
+                if (order === 'asc') return valA.toString().localeCompare(valB.toString());
+                else return valB.toString().localeCompare(valA.toString());
+            });
+            renderTable('salaryTableWrapper', sorted, salaryCols);
+        }
+
+        // Load Conveyance (with filtering)
+        let conveyanceData = [];
+        let conveyanceCols = [];
+        let currentFilter = 'all';
+
+        function loadConveyance() {
+            const wrapper = document.getElementById('conveyanceTableWrapper');
+            fetch('/api/table/conveyance')
+                .then(res => res.json())
+                .then(data => {
+                    conveyanceData = data;
+                    conveyanceCols = data.length > 0 ? Object.keys(data[0]) : ['date', 'employee', 'purpose', 'status'];
+                    applyConveyanceFilter('all');
+                })
+                .catch(() => {
+                    wrapper.innerHTML = '<div class="alert alert-danger">Failed to load conveyance.</div>';
+                });
+        }
+
+        function applyConveyanceFilter(filter) {
+            currentFilter = filter;
+            const wrapper = document.getElementById('conveyanceTableWrapper');
+            let filtered = conveyanceData;
+            if (filter !== 'all') {
+                // Try to find status column (case insensitive)
+                const statusCol = conveyanceCols.find(c => c.toLowerCase() === 'status' || c.toLowerCase().includes('status'));
+                if (statusCol) {
+                    filtered = conveyanceData.filter(row => (row[statusCol] || '').toLowerCase() === filter.toLowerCase());
+                } else {
+                    // If no status column, just show all
+                    filtered = conveyanceData;
+                }
+            }
+            renderTable('conveyanceTableWrapper', filtered, conveyanceCols);
+        }
+
+        // Load all tabs (default active is collections)
+        loadCollections();
+        // Preload others but they will render when tab is shown to save initial load,
+        // but we can load them upfront for faster switching.
+        // Actually let's load them on tab show.
+        const salaryTab = document.getElementById('salary-tab');
+        const conveyanceTab = document.getElementById('conveyance-tab');
+
+        salaryTab.addEventListener('shown.bs.tab', function() {
+            if (!document.getElementById('salaryTableWrapper').innerHTML.includes('table')) {
+                loadSalary();
+            }
+        });
+
+        conveyanceTab.addEventListener('shown.bs.tab', function() {
+            if (!document.getElementById('conveyanceTableWrapper').innerHTML.includes('table')) {
+                loadConveyance();
+            }
+        });
+
+        // Sort buttons for salary
+        document.querySelectorAll('.sort-salary').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const order = this.dataset.sort;
+                sortSalary(order);
+            });
+        });
+
+        // Filter buttons for conveyance
+        document.querySelectorAll('.filter-conveyance').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-conveyance').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const filter = this.dataset.filter;
+                applyConveyanceFilter(filter);
+            });
+        });
+
+        // If salary tab is active by default (it's not, collections is), but load if clicked.
+        // Also load salary/conveyance if they are initially active (unlikely)
+        if (document.getElementById('salary-tab').classList.contains('active')) loadSalary();
+        if (document.getElementById('conveyance-tab').classList.contains('active')) loadConveyance();
+    });
+</script>
+{% endblock %}

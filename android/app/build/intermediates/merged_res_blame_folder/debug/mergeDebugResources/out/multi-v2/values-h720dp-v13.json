@@ -1,0 +1,23 @@
+{
+    "logs": [
+        {
+<<<<<<< Updated upstream
+            "outputFile": "com.onecity.app-mergeDebugResources-19:/values-h720dp-v13/values-h720dp-v13.xml",
+=======
+            "outputFile": "com.onecity.app-mergeDebugResources-20:/values-h720dp-v13/values-h720dp-v13.xml",
+>>>>>>> Stashed changes
+            "map": [
+                {
+                    "source": "C:\\Users\\salahuddin\\.gradle\\caches\\9.5.0\\transforms\\66bb04da7c53152a1306a71d5db98932\\transformed\\appcompat-1.6.1\\res\\values-h720dp-v13\\values-h720dp-v13.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "66",
+                        "endOffsets": "117"
+                    }
+                }
+            ]
+        }
+    ]
+}
